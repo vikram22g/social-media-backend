@@ -6,13 +6,14 @@ const authMiddleware = (req, res, next) => {
 
     try {
 
-        // const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3Nzg4MjQ3ODJ9.jLMdckCJAy1wW3nPPpZebBuLRQp_NHmSL2pWJ5Ozyss";
         console.log(req.cookies)
-        const token = req.cookies.token;
-        console.log(token)
+        const token = req.cookies?.token; 
+
+        //to handle if there is no token or user not logged in
         if (!token) {
             return res.status(401).json({
-                message: "Unauthorized"
+                success: false,
+                message: "Unauthorized access"
             });
         }
 
@@ -21,16 +22,15 @@ const authMiddleware = (req, res, next) => {
             process.env.JWT_SECRET
         );
 
-        req.user = decoded;
-
+        req.user = decoded; 
         next();
 
-    } catch (error) {
-
-        res.status(401).json({
-            message: "Invalid Token"
-        });
-
+    } 
+    catch (error) { 
+        return res.status(401).json({
+            success: false,
+            message: "Invalid or expired token"
+        }); 
     }
 
 };
